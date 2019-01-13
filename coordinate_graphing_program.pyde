@@ -1,22 +1,21 @@
-
+ # this class lets us make coordinate objects and store them in an array
 class Coordinate:
-    # this class lets us make coordinate objects and store them in an array
+    # config variables
+    rad = 10 # point radius
+    topMargin = 20 # how far above the point text is drawn
+    lrMargin = 60 # minimum distance from edge before text alignment is changed
+    
     def __init__(self, x, y):
         self.x = x
         self.y = y
         
     # method to draw a small circle with a label above it containing the xy coordinates as well as the # the point is (last argument is optional)
     def drawDot(self, dotNum = 0):
-        # drawing the actual circle aka the point
         stroke(0)
         fill(255)
-        rad = 10 # circle radius, change if need
-        ellipse(self.x, self.y, rad, rad) 
+        ellipse(self.x, self.y, self.rad, self.rad) # drawing the point
         
-        # margin is how far above or below the point the text is drawn, if you click at the top then the text will be drawn below the point
-        topMargin = 20
-        lrMargin = 60
-        textY = self.y - topMargin
+        textY = self.y - self.topMargin
             
         word = "X: " + str(int(self.x)) + ", " + "Y: " + str(int(self.y)) # creating the string we will draw above the point
         textAlign(CENTER, CENTER)
@@ -24,11 +23,11 @@ class Coordinate:
         stroke(255)
         
         # check if the text would be off screen and move accordingly
-        if self.y - topMargin < 0:
-            textY = self.y + topMargin
-        if self.x + lrMargin > width:
+        if self.y - self.topMargin < 0:
+            textY = self.y + self.topMargin
+        if self.x + self.lrMargin > width:
             textAlign(RIGHT, CENTER)
-        elif self.x - lrMargin < 0:
+        elif self.x - self.lrMargin < 0:
             textAlign(LEFT, CENTER)
 
         # the dotNum argument is optional, if none is given it will default to 0 and we won't draw a number next to the points
@@ -37,8 +36,10 @@ class Coordinate:
         else: # else draw the point's number
             word += ", #" + str(dotNum) # join dotNum with the existing string.
             text(word, self.x, textY)
-            
+
 points = [] # array of points
+
+# app config variables that can be changed in-app
 mode = True # mode True means clicking adds a point to the coordinate graph, False means clicking a point will remove it
 drawLine = False # draw lines between points
 snap = False # when enabled, points snap to nearest 10
@@ -51,7 +52,6 @@ def setup():
 
 def draw():
     background(255)
-    
     
     if drawGraph:
         # draw verticle lines
@@ -66,17 +66,12 @@ def draw():
     
     # loop through our array and call the drawDot method on each, we pass in in the index + 1 (index starts from 0, and remember 0 = disabled in the method) to number each point
     for i in range(len(points)):
-        points[i].drawDot()
-    
-    if drawLine and len(points) > 1:
+        points[i].drawDot(i + 1)
+
+    if drawLine:
         stroke(0)
         for i in range(1, len(points)):
             line(points[i -1].x, points[i - 1].y, points[i].x, points[i].y)
-    
-    # draw a gray rectangle at the bottom margin of the screen
-    fill(150)
-    noStroke()
-    rect(0, 600, width, 50)
     
     drawButtons()
     
@@ -100,6 +95,10 @@ def mousePressed():
                 return
     
 def drawButtons():
+    # draw a gray rectangle at the bottom margin of the screen to place buttons on
+    fill(150)
+    noStroke()
+    rect(0, 600, width, 50)
     textAlign(LEFT)
     
     # draw "toggle add/remove" button
