@@ -85,8 +85,8 @@ def mousePressed():
         x = mouseX
         y = mouseY
         if snap:
-            x = round(x, -1)
-            y = round(y, -1)
+            x = round(x * 2, -1) / 2
+            y = round(y * 2, -1) / 2
         points.append(Coordinate(x, y))
     else:
         for i in range(len(points)): # if in remove mode then loop through array and check if we clicked inside one of the points
